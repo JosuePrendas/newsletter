@@ -2,6 +2,7 @@ const express = require("express");
 const request = require("request");
 const bodyParser = require("body-parser");
 const https = require("https");
+require("dotenv").config({ path: "secrets.env" });
 
 const app = express();
 
@@ -32,22 +33,24 @@ app.post("/", function (req, res) {
   };
 
   const jsonData = JSON.stringify(data);
-  const url = `https://us18.api.mailchimp.com/3.0/lists/18015e00d4`;
-  const apiKey = "83fe572d9e5666a27c1477d8f4138309-us18";
   const options = {
     method: "POST",
-    auth: `jprendas:${apiKey}`,
+    auth: `jprendas:${process.env.MAILCHIMP_API_KEY}`,
   };
-  const request = https.request(url, options, function (response) {
-    if (response.statusCode === 200) {
-      res.sendFile(__dirname + "/success.html");
-    } else {
-      res.sendFile(__dirname + "/failure.html");
+  const request = https.request(
+    process.env.MAILCHIMP_BASE_URL,
+    options,
+    function (response) {
+      if (response.statusCode === 200) {
+        res.sendFile(__dirname + "/success.html");
+      } else {
+        res.sendFile(__dirname + "/failure.html");
+      }
+      response.on("data", function (data) {
+        var result = JSON.parse(data);
+      });
     }
-    response.on("data", function (data) {
-      var result = JSON.parse(data);
-    });
-  });
+  );
   request.write(jsonData);
   request.end();
   request.responseCode = 200;
