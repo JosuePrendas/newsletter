@@ -2,7 +2,7 @@ const express = require("express");
 const request = require("request");
 const bodyParser = require("body-parser");
 const https = require("https");
-require("dotenv").config({ path: "secrets.env" });
+require("dotenv").config();
 
 const app = express();
 
